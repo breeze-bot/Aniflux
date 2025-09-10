@@ -41,13 +41,13 @@ dependencies {
     implementation 'com.github.bumptech.glide:glide:4.16.0'
     annotationProcessor 'com.github.bumptech.glide:compiler:4.16.0'
     // already you have retrofit/glide/okhttp; add:
-implementation 'com.airbnb.android:lottie:5.2.0'          // animated splash (Lottie)
-implementation 'com.eightbitlab:blurview:1.6.6'          // frosted glass effect
-implementation 'androidx.viewpager2:viewpager2:1.1.0'
-implementation 'androidx.room:room-runtime:2.6.1'
-kapt 'androidx.room:room-compiler:2.6.1'                  // or annotationProcessor for Java
-implementation 'com.google.android.exoplayer:exoplayer:2.19.1'
-implementation 'androidx.swiperefreshlayout:swiperefreshlayout:1.2.0'
-implementation 'androidx.navigation:navigation-fragment-ktx:2.7.0'
-implementation 'androidx.navigation:navigation-ui-ktx:2.7.0'
+    implementation 'com.airbnb.android:lottie:5.2.0'          // animated splash (Lottie)
+    implementation 'com.eightbitlab:blurview:1.6.6'          // frosted glass effect
+    implementation 'androidx.viewpager2:viewpager2:1.1.0'
+    implementation 'androidx.room:room-runtime:2.6.1'
+    kapt 'androidx.room:room-compiler:2.6.1'                  // or annotationProcessor for Java
+    implementation 'com.google.android.exoplayer:exoplayer:2.19.1'
+    implementation 'androidx.swiperefreshlayout:swiperefreshlayout:1.2.0'
+    implementation 'androidx.navigation:navigation-fragment-ktx:2.7.0'
+    implementation 'androidx.navigation:navigation-ui-ktx:2.7.0'
 }
