@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.coordinatorlayout.widget.CoordinatorLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/black">
+
+    <!-- Top bar -->
+    <LinearLayout
+        android:id="@+id/top_bar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:padding="16dp"
+        android:gravity="center_vertical">
+
+        <!-- Profile Icon -->
+        <ImageView
+            android:id="@+id/profile_icon"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:src="@drawable/ic_profile"
+            android:background="@drawable/circle_bg"
+            android:scaleType="centerCrop"/>
+
+        <!-- Spacer -->
+        <View
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_weight="1"/>
+
+        <!-- Search -->
+        <androidx.cardview.widget.CardView
+            android:layout_width="200dp"
+            android:layout_height="40dp"
+            app:cardBackgroundColor="#20FFFFFF"
+            app:cardCornerRadius="20dp"
+            app:cardElevation="0dp">
+
+            <EditText
+                android:id="@+id/search_bar"
+                android:hint="Search anime..."
+                android:background="@android:color/transparent"
+                android:textColor="@android:color/white"
+                android:hintTextColor="@color/grey_20"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:padding="10dp"/>
+        </androidx.cardview.widget.CardView>
+    </LinearLayout>
+
+    <!-- Scrollable content -->
+    <androidx.core.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginBottom="70dp"
+        android:paddingTop="60dp">
+
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <!-- Banner carousel -->
+            <androidx.viewpager2.widget.ViewPager2
+                android:id="@+id/bannerViewPager"
+                android:layout_width="match_parent"
+                android:layout_height="200dp"
+                android:clipToPadding="false"
+                android:clipChildren="false"
+                android:overScrollMode="never"/>
+
+            <!-- Categories RecyclerView -->
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/categoryRecyclerView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="8dp"
+                android:nestedScrollingEnabled="false"/>
+        </LinearLayout>
+    </androidx.core.widget.NestedScrollView>
+
+    <!-- Floating Navigation -->
+    <LinearLayout
+        android:id="@+id/bottom_nav"
+        android:layout_width="match_parent"
+        android:layout_height="70dp"
+        android:layout_gravity="bottom"
+        android:gravity="center"
+        android:padding="10dp"
+        android:background="@drawable/nav_glass_bg">
+
+        <ImageButton
+            android:id="@+id/nav_home"
+            android:src="@drawable/ic_home"
+            android:background="@android:color/transparent"
+            android:tint="@android:color/white"
+            android:layout_width="40dp"
+            android:layout_height="40dp"/>
+
+        <ImageButton
+            android:id="@+id/nav_library"
+            android:src="@drawable/ic_library"
+            android:background="@android:color/transparent"
+            android:tint="@android:color/white"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_marginStart="50dp"
+            android:layout_marginEnd="50dp"/>
+
+        <ImageButton
+            android:id="@+id/nav_settings"
+            android:src="@drawable/ic_settings"
+            android:background="@android:color/transparent"
+            android:tint="@android:color/white"
+            android:layout_width="40dp"
+            android:layout_height="40dp"/>
+    </LinearLayout>
+
+</androidx.coordinatorlayout.widget.CoordinatorLayout>
