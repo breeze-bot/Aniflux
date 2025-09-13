@@ -1,4 +1,4 @@
-package com.aniflux.app.ui.splash
+package com.aniflux.app.ui
 
 import android.content.Intent
 import android.os.Bundle

@@ -1,30 +1,56 @@
 package com.aniflux.app
 
 import android.os.Bundle
-import android.view.View
 import androidx.appcompat.app.AppCompatActivity
-import com.eightbitlab.blurview.BlurView
-import com.eightbitlab.blurview.RenderScriptBlur
+import androidx.lifecycle.lifecycleScope
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.viewpager2.widget.ViewPager2
+import com.aniflux.databinding.ActivityMainBinding
+import com.aniflux.network.ApiService
+import com.aniflux.repository.AniListRepository
+import com.aniflux.ui.*
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class MainActivity : AppCompatActivity() {
-    private lateinit var blurView: BlurView
+
+    private lateinit var binding: ActivityMainBinding
+    private val apiService = ApiService.create()
+    private val repository = AniListRepository(apiService)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
+        binding = ActivityMainBinding.inflate(layoutInflater)
+        setContentView(binding.root)
 
-        blurView = findViewById(R.id.blurView)
+        // Load AniList data
+        lifecycleScope.launch {
+            val trending = withContext(Dispatchers.IO) { repository.getTrendingAnime() }
+            val popular = withContext(Dispatchers.IO) { repository.getPopularAnime() }
+            val airing = withContext(Dispatchers.IO) { repository.getAiringAnime() }
 
-        // the view we want to blur the background of (root of layout)
-        val rootView = findViewById<View>(R.id.root)
-        // radius in dp (float)
-        val radius = 12f
+            // Banners (use trending top 5)
+            val banners = trending.take(5).map {
+                Banner(it.coverImage.large ?: "", it.title.english ?: it.title.romaji ?: "")
+            }
+            binding.bannerViewPager.adapter = BannerAdapter(banners)
+            binding.bannerViewPager.orientation = ViewPager2.ORIENTATION_HORIZONTAL
 
-        // Setup blur (uses RenderScriptBlur internally)
-        blurView.setupWith(rootView)
-            .setFrameClearDrawable(rootView.background)
-            .setBlurAlgorithm(RenderScriptBlur(this))
-            .setBlurRadius(radius)
-            .setHasFixedTransformationMatrix(true)
+            // Categories
+            val categories = listOf(
+                Category("Trending", trending.map {
+                    Anime(it.title.english ?: it.title.romaji ?: "", it.coverImage.large ?: "")
+                }),
+                Category("Popular", popular.map {
+                    Anime(it.title.english ?: it.title.romaji ?: "", it.coverImage.large ?: "")
+                }),
+                Category("Airing", airing.map {
+                    Anime(it.title.english ?: it.title.romaji ?: "", it.coverImage.large ?: "")
+                })
+            )
+            binding.categoryRecyclerView.layoutManager = LinearLayoutManager(this@MainActivity)
+            binding.categoryRecyclerView.adapter = CategoryAdapter(categories)
+        }
     }
 }

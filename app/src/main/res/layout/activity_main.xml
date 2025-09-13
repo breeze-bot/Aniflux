@@ -1,121 +1,115 @@
-<?xml version="1.0" encoding="utf-8"?>
-<androidx.coordinatorlayout.widget.CoordinatorLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="@color/black">
+package com.aniflux.app;
 
-    <!-- Top bar -->
-    <LinearLayout
-        android:id="@+id/top_bar"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:padding="16dp"
-        android:gravity="center_vertical">
+import android.content.Intent;
+import android.os.Bundle;
+import android.os.Handler;
+import android.text.Editable;
+import android.text.TextWatcher;
+import android.widget.EditText;
+import android.widget.ImageButton;
+import android.widget.ImageView;
 
-        <!-- Profile Icon -->
-        <ImageView
-            android:id="@+id/profile_icon"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:src="@drawable/ic_profile"
-            android:background="@drawable/circle_bg"
-            android:scaleType="centerCrop"/>
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+import androidx.viewpager2.widget.ViewPager2;
 
-        <!-- Spacer -->
-        <View
-            android:layout_width="0dp"
-            android:layout_height="0dp"
-            android:layout_weight="1"/>
+import java.util.ArrayList;
+import java.util.List;
 
-        <!-- Search -->
-        <androidx.cardview.widget.CardView
-            android:layout_width="200dp"
-            android:layout_height="40dp"
-            app:cardBackgroundColor="#20FFFFFF"
-            app:cardCornerRadius="20dp"
-            app:cardElevation="0dp">
+public class MainActivity extends AppCompatActivity {
 
-            <EditText
-                android:id="@+id/search_bar"
-                android:hint="Search anime..."
-                android:background="@android:color/transparent"
-                android:textColor="@android:color/white"
-                android:hintTextColor="@color/grey_20"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:padding="10dp"/>
-        </androidx.cardview.widget.CardView>
-    </LinearLayout>
+    private ImageView profileIcon;
+    private EditText searchBar;
+    private ViewPager2 bannerViewPager;
+    private RecyclerView categoryRecyclerView;
 
-    <!-- Scrollable content -->
-    <androidx.core.widget.NestedScrollView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_marginBottom="70dp"
-        android:paddingTop="60dp">
+    private BannerAdapter bannerAdapter;
+    private CategoryAdapter categoryAdapter;
 
-        <LinearLayout
-            android:orientation="vertical"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+    private Handler bannerHandler = new Handler();
+    private int bannerIndex = 0;
 
-            <!-- Banner carousel -->
-            <androidx.viewpager2.widget.ViewPager2
-                android:id="@+id/bannerViewPager"
-                android:layout_width="match_parent"
-                android:layout_height="200dp"
-                android:clipToPadding="false"
-                android:clipChildren="false"
-                android:overScrollMode="never"/>
+    private final Runnable bannerRunnable = new Runnable() {
+        @Override
+        public void run() {
+            if (bannerAdapter.getItemCount() > 0) {
+                bannerIndex = (bannerIndex + 1) % bannerAdapter.getItemCount();
+                bannerViewPager.setCurrentItem(bannerIndex, true);
+                bannerHandler.postDelayed(this, 4000); // auto scroll every 4s
+            }
+        }
+    };
 
-            <!-- Categories RecyclerView -->
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/categoryRecyclerView"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:padding="8dp"
-                android:nestedScrollingEnabled="false"/>
-        </LinearLayout>
-    </androidx.core.widget.NestedScrollView>
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
 
-    <!-- Floating Navigation -->
-    <LinearLayout
-        android:id="@+id/bottom_nav"
-        android:layout_width="match_parent"
-        android:layout_height="70dp"
-        android:layout_gravity="bottom"
-        android:gravity="center"
-        android:padding="10dp"
-        android:background="@drawable/nav_glass_bg">
+        profileIcon = findViewById(R.id.profile_icon);
+        searchBar = findViewById(R.id.search_bar);
+        bannerViewPager = findViewById(R.id.bannerViewPager);
+        categoryRecyclerView = findViewById(R.id.categoryRecyclerView);
 
-        <ImageButton
-            android:id="@+id/nav_home"
-            android:src="@drawable/ic_home"
-            android:background="@android:color/transparent"
-            android:tint="@android:color/white"
-            android:layout_width="40dp"
-            android:layout_height="40dp"/>
+        ImageButton navHome = findViewById(R.id.nav_home);
+        ImageButton navLibrary = findViewById(R.id.nav_library);
+        ImageButton navSettings = findViewById(R.id.nav_settings);
 
-        <ImageButton
-            android:id="@+id/nav_library"
-            android:src="@drawable/ic_library"
-            android:background="@android:color/transparent"
-            android:tint="@android:color/white"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:layout_marginStart="50dp"
-            android:layout_marginEnd="50dp"/>
+        // Profile click → open profile activity
+        profileIcon.setOnClickListener(v -> {
+            Intent intent = new Intent(MainActivity.this, ProfileActivity.class);
+            startActivity(intent);
+        });
 
-        <ImageButton
-            android:id="@+id/nav_settings"
-            android:src="@drawable/ic_settings"
-            android:background="@android:color/transparent"
-            android:tint="@android:color/white"
-            android:layout_width="40dp"
-            android:layout_height="40dp"/>
-    </LinearLayout>
+        // Search input
+        searchBar.addTextChangedListener(new TextWatcher() {
+            @Override public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+            @Override public void onTextChanged(CharSequence s, int start, int before, int count) {}
+            @Override
+            public void afterTextChanged(Editable s) {
+                // TODO: hook search logic
+            }
+        });
 
-</androidx.coordinatorlayout.widget.CoordinatorLayout>
+        // Setup banner carousel
+        List<Integer> bannerImages = new ArrayList<>();
+        bannerImages.add(R.drawable.banner1);
+        bannerImages.add(R.drawable.banner2);
+        bannerImages.add(R.drawable.banner3);
+
+        bannerAdapter = new BannerAdapter(bannerImages);
+        bannerViewPager.setAdapter(bannerAdapter);
+        bannerHandler.postDelayed(bannerRunnable, 4000);
+
+        // Setup categories list
+        List<String> categories = new ArrayList<>();
+        categories.add("Action");
+        categories.add("Romance");
+        categories.add("Comedy");
+        categories.add("Fantasy");
+
+        categoryAdapter = new CategoryAdapter(categories);
+        categoryRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+        categoryRecyclerView.setAdapter(categoryAdapter);
+
+        // Bottom nav
+        navHome.setOnClickListener(v -> {
+            // already on home
+        });
+        navLibrary.setOnClickListener(v -> {
+            Intent intent = new Intent(MainActivity.this, LibraryActivity.class);
+            startActivity(intent);
+        });
+        navSettings.setOnClickListener(v -> {
+            Intent intent = new Intent(MainActivity.this, SettingsActivity.class);
+            startActivity(intent);
+        });
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        bannerHandler.removeCallbacks(bannerRunnable);
+    }
+}

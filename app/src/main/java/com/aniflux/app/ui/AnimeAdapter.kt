@@ -1,4 +1,4 @@
-package com.aniflux.ui
+package com.aniflux.app.ui
 
 import android.view.LayoutInflater
 import android.view.View
